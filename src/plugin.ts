@@ -42,8 +42,21 @@ function runSnapshotComparison(name: string) {
 		snapshotsAbsolute: `${currentSpec?.absolute}-snapshots/`,
 		screenshotsAbsolute: `${currentSpec?.absolute?.replace(currentSpec?.specType || 'integration', (currentRun?.config?.screenshotsFolder || '').split('\\').reverse()[0])}/`
 	};
-	console.log(currentSpec, opts)
 
+	// Make sure all necessary directories are created.
+	if (!fs.existsSync(opts.snapshotAbsolute)) {
+		fs.mkdirSync(opts.snapshotAbsolute, { recursive: true });
+	}
+
+	// Get currently screenshoted image.
+	const actualImage = PNG.sync.read(
+		fs.readFileSync(`${opts.screenshotsAbsolute}${opts.snapshotName}.png`)
+	);
+	// Save currently screenshoted image to snapshots folder as actual.
+	fs.writeFileSync(
+		`${opts.snapshotAbsolute}actual.png`,
+		PNG.sync.write(actualImage)
+	);
 
 	// Get previously saved and expected snapshot image.
 	let expectedImage: any | undefined;
@@ -56,18 +69,8 @@ function runSnapshotComparison(name: string) {
 		width = expectedImage.width;
 		height = expectedImage.height;
 	} catch {
-		// TODO: Log no image yet
+		throw new Error(`An expected snapshot '${opts.snapshotName}' does not yet exist.\n\nReview the 'actual.png' in '${opts.snapshotAbsolute}' and rename it to 'expected.png' if you approve the changes.`);
 	}
-
-	// Get currently screenshoted image.
-	const actualImage = PNG.sync.read(
-		fs.readFileSync(`${opts.screenshotsAbsolute}${opts.snapshotName}.png`)
-	);
-	// Save currently screenshoted image to snapshots folder as actual.
-	fs.writeFileSync(
-		`${opts.snapshotAbsolute}actual.png`,
-		PNG.sync.write(actualImage)
-	);
 
 	// Create diff image.
 	const diff = new PNG({ width, height });
@@ -87,7 +90,7 @@ function runSnapshotComparison(name: string) {
 	// Throw error in order to fail test if any pixel differences has been found.
 	if (pixelDiffCount) {
 		throw new Error(
-			`'${opts.snapshotName}' snapshot has changed.\n\nReview the 'diff.png' in '${opts.snapshotAbsolute}' and rename 'actual.png' to 'expected.png' if you approve the changes.`
+			`The '${opts.snapshotName}' snapshot has changed.\n\nReview the 'diff.png' in '${opts.snapshotAbsolute}' and rename 'actual.png' to 'expected.png' if you approve the changes.`
 		);
 	}
 
