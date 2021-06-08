@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const { addCypressHellPlugin } = require('../../dist/src/plugin');
+const { addCypressHellPlugin } = require('../../dist/plugin');
 /**
  * @type {Cypress.PluginConfig}
  */

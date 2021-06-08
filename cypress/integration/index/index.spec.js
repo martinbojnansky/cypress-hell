@@ -5,7 +5,7 @@ describe('index.html', () => {
 		cy.visit('');
 	});
 
-	it('should something', () => {
-		cy.get('h1').should('have.text', 'hello');
+	it('should render', () => {
+		cy.expectSnapshot('index--rendered');
 	});
 });
