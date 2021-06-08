@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "start-compiler": "tsc -w",
+    "start-sample": "node index.js",
+    "test": "./node_modules/.bin/cypress run"
   },
   "repository": {
     "type": "git",
@@ -25,7 +27,14 @@
   },
   "homepage": "https://github.com/martinbojnansky/cypress-hell#readme",
   "devDependencies": {
+    "@types/cypress": "^1.1.3",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.12.2",
+    "@types/pixelmatch": "^5.2.3",
     "cypress": "^7.5.0",
     "typescript": "^4.3.2"
+  },
+  "dependencies": {
+    "pixelmatch": "^5.2.1"
   }
 }
