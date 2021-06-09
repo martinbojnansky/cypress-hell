@@ -75,18 +75,22 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 
 	// Create diff image.
 	const diff = new PNG({ width, height });
-	const pixelDiffCount = pixelmatch(
-		expectedImage.data,
-		actualImage.data,
-		diff.data,
-		width,
-		height,
-		{
-			threshold: 0.1,
-		}
-	);
-	// Save diff image to snapshots folder as diff.
-	fs.writeFileSync(`${config.snapshotAbsolute}diff.png`, PNG.sync.write(diff));
+	let pixelDiffCount: number | undefined;
+	try {
+		pixelDiffCount = pixelmatch(
+			expectedImage.data,
+			actualImage.data,
+			diff.data,
+			width,
+			height,
+			args.pixelmatch
+		);
+		// Save diff image to snapshots folder as diff.
+		fs.writeFileSync(`${config.snapshotAbsolute}diff.png`, PNG.sync.write(diff));
+	}
+	catch (ex) {
+
+	}
 
 	// If update snapshots is configured, do not fail the test, 
 	// but override expected image with actual.
@@ -96,11 +100,10 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 			PNG.sync.write(actualImage)
 		);
 		console.log(`The expected '${config.snapshotName}' snapshot has been updated.\n\nReview the 'expected.png' in '${config.snapshotAbsolute}' and revert the update was not intended.`);
-		return null;
 	}
 
 	// Throw error in order to fail test if any pixel differences has been found.
-	if (pixelDiffCount) {
+	if (pixelDiffCount && !args?.updateSnapshots) {
 		throw new Error(
 			`The '${config.snapshotName}' snapshot has changed.\n\nReview the 'diff.png' in '${config.snapshotAbsolute}' and rename 'actual.png' to 'expected.png' if you approve the changes.`
 		);

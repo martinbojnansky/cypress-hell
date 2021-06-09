@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start-compiler": "tsc -w",
-    "start-sample": "node index.js",
-    "test": "./node_modules/.bin/cypress run"
+    "start": "npm-run-all clean -p serve compile",
+    "clean": "rimraf dist",
+    "compile": "tsc -w",
+    "serve": "node index.js",
+    "cypress": "./node_modules/.bin/cypress open",
+    "cypress-ci": "./node_modules/.bin/cypress run"
   },
   "repository": {
     "type": "git",
@@ -31,7 +34,9 @@
     "@types/jest": "^26.0.23",
     "@types/node": "^15.12.2",
     "@types/pixelmatch": "^5.2.3",
+    "browser-sync": "^2.26.14",
     "cypress": "^7.5.0",
+    "npm-run-all": "^4.1.5",
     "typescript": "^4.3.2"
   },
   "dependencies": {
