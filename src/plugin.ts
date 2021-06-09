@@ -6,7 +6,7 @@ import { SnapshotComparisonArgs } from './models';
 let currentRun: Cypress.BeforeRunDetails | undefined;
 let currentSpec: Cypress.Spec | undefined;
 
-export function addCypressHellPlugin(
+export function addCypressSnapshotsPlugin(
 	on: Cypress.PluginEvents,
 	conf: Cypress.PluginConfig
 ): void {
@@ -89,7 +89,8 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 		fs.writeFileSync(`${config.snapshotAbsolute}diff.png`, PNG.sync.write(diff));
 	}
 	catch (ex) {
-
+		// Fail if images are not the same size.
+		pixelDiffCount = 1;
 	}
 
 	// If update snapshots is configured, do not fail the test, 
@@ -103,7 +104,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 	}
 
 	// Throw error in order to fail test if any pixel differences has been found.
-	if (pixelDiffCount && !args?.updateSnapshots) {
+	if (pixelDiffCount && !args.updateSnapshots) {
 		throw new Error(
 			`The '${config.snapshotName}' snapshot has changed.\n\nReview the 'diff.png' in '${config.snapshotAbsolute}' and rename 'actual.png' to 'expected.png' if you approve the changes.`
 		);

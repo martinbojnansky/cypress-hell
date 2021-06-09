@@ -1,1 +1,1 @@
-# cypress-hell
+# cypress-snapshots

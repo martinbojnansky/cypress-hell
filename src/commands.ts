@@ -1,6 +1,6 @@
 import { SnapshotComparisonArgs } from "./models";
 
-export function addCypressHellCommands(): void {
+export function addCypressSnapshotsCommands(): void {
 	Cypress.Commands.add('expectSnapshot', { prevSubject: 'optional' }, ($subject: Cypress.PrevSubject, name: string) => {
 		const args: SnapshotComparisonArgs = {
 			name: name,

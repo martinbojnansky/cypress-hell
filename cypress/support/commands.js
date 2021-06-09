@@ -1,3 +1,3 @@
-const { addCypressHellCommands } = require('../../dist/commands');
+const { addCypressSnapshotsCommands } = require('../../dist/commands');
 
-addCypressHellCommands();
+addCypressSnapshotsCommands();
