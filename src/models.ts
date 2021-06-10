@@ -1,4 +1,4 @@
-import { PixelmatchOptions } from "pixelmatch";
+import { PixelmatchOptions } from 'pixelmatch';
 
 export interface SnapshotComparisonArgs {
   name: string;
