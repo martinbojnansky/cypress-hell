@@ -1,0 +1,33 @@
+<html>
+
+<head>
+  <title>Cypress Snapshots</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+  <div id="app">
+    {{ message }}
+    <button v-on:click="updateSnapshot('123')">Update Snapshot</button>
+  </div>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!',
+      },
+      methods: {
+        updateSnapshot(path) {
+          fetch('/api/update-snapshots', { method: 'PATCH' })
+            .then((r) => console.log('response', r))
+            .catch((e) => {
+              console.log('error', e);
+            });
+        },
+      },
+    });
+
+  </script>
+</body>
+
+</html>
