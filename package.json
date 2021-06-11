@@ -1,6 +1,6 @@
 {
   "name": "cypress-snapshots",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "main": "dist",
   "files": [
@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "start": "npm-run-all clean -p watch serve cypress",
+    "start-ci": "npm-run-all clean compile -p serve cypress-ci",
     "clean": "rimraf dist",
     "compile": "tsc",
     "watch": "npm run compile -- -w",

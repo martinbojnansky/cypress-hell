@@ -7,24 +7,8 @@ on:
     branches: [master, dev/*] 
 
 jobs:
-  build_plugin:
+  start:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x]
-
-    steps:   
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}   
-      - run: npm i
-      - run: npm run compile
-
-  verify_examples:
-    runs-on: windows-latest
 
     strategy:
       matrix:
@@ -32,9 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: cypress-io/github-action@v2
         with:
-          node-version: ${{ matrix.node-version }} 
-      - run: npm ci
-      - run: npm start
+          verify: npm run start-ci
