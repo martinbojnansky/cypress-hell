@@ -41,11 +41,6 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}  
+          node-version: ${{ matrix.node-version }} 
       - run: npm ci
-      - run: npm run update-snapshots
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Snapshots change
-          commit_options: '--no-verify --signoff'
-          file_pattern: cypress/*
+      - run: npm run start-ci
