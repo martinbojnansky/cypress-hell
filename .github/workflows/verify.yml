@@ -48,4 +48,4 @@ jobs:
         with:
           commit_message: Snapshots change
           commit_options: '--no-verify --signoff'
-          file_pattern: **/cypress/*
+          file_pattern: examples/cypress/*.png
