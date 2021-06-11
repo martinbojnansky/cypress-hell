@@ -42,8 +42,5 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }} 
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          build: npm ci
-          start: npm run start-ci
+      - run: npm ci
+      - run: npm run start-ci
