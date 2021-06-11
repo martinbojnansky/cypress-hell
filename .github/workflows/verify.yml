@@ -25,9 +25,6 @@ jobs:
 
   verify_examples:
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: examples
 
     strategy:
       matrix:
