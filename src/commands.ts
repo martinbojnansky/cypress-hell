@@ -11,7 +11,7 @@ export function addCypressSnapshotsCommands(): void {
 
       // Take a screenshot with specific name
       return ($subject ? cy.wrap($subject) : cy)
-        .screenshot(args.name)
+        .screenshot(`__snapshot__${args.name}`)
         .then(() => {
           // Runs comparison of expected snapshot and actual screenshot.
           cy.task('runSnapshotComparison', args);

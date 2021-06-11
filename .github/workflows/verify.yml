@@ -1,0 +1,43 @@
+name: Verify
+
+on:
+  push:
+    branches: [master, dev/*]
+  pull_request:
+    branches: [master, dev/*] 
+
+jobs:
+  build_plugin:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:   
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}   
+      - run: npm i
+      - run: npm run compile
+
+  verify_examples:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: examples
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }} 
+      - run: npm ci
+      - run: npm start

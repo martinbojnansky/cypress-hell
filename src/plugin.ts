@@ -16,6 +16,12 @@ export function addCypressSnapshotsPlugin(
   on('before:spec', (spec: Cypress.Spec) => {
     currentSpec = spec;
   });
+  on('after:screenshot', ({ path }) => {
+    // Override previous screenshot, so on test refresh the newest is accessed.
+    if (path.includes('__snapshot__')) {
+      fs.renameSync(path, path.replace(/ \(\d*\)/i, ''));
+    }
+  });
   on('task', {
     runSnapshotComparison(args: SnapshotComparisonArgs) {
       return runSnapshotComparison(args);
@@ -55,7 +61,9 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 
   // Get currently screenshoted image.
   const actualImage = PNG.sync.read(
-    fs.readFileSync(`${config.screenshotsAbsolute}${config.snapshotName}.png`)
+    fs.readFileSync(
+      `${config.screenshotsAbsolute}__snapshot__${config.snapshotName}.png`
+    )
   );
   // Save currently screenshoted image to snapshots folder as actual.
   fs.writeFileSync(
