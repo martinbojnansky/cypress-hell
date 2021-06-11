@@ -51,7 +51,10 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
       currentSpec?.specType || 'integration',
       (currentRun?.config?.screenshotsFolder || '').split('\\').reverse()[0]
     )}/`,
-    updateSnapshots: process.env['npm_config_updateSnapshots'] || false,
+    updateSnapshots:
+      process.env['npm_config_updateSnapshots'] === 'true' ? true : false,
+    ignoreSnapshotError:
+      process.env['npm_config_ignoreSnapshotError'] === 'true' ? true : false,
   };
 
   // Make sure all necessary directories are created.
@@ -106,24 +109,36 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
       `${config.snapshotAbsolute}expected.png`,
       PNG.sync.write(actualImage)
     );
-    throw new Error(
-      `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotAbsolute}`
+    return throwError(
+      `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotAbsolute}`,
+      config.ignoreSnapshotError
     );
   }
   // Fail if no update is configured and expected image is missing.
   else if (!expectedImage) {
-    throw new Error(
-      `An expected "${config.snapshotName}" snapshot has not been yet defined. See ${config.snapshotAbsolute}`
+    return throwError(
+      `An expected "${config.snapshotName}" snapshot has not been yet defined. See ${config.snapshotAbsolute}`,
+      config.ignoreSnapshotError
     );
   }
   // Fail if any pixel has changed and update has not been configured.
   else if (pixelDiffCount && !config.updateSnapshots) {
-    throw new Error(
-      `The "${config.snapshotName}" snapshot has changed. ${pixelDiffCount} pixels does not match. See ${config.snapshotAbsolute}`
+    return throwError(
+      `The "${config.snapshotName}" snapshot has changed. ${pixelDiffCount} pixels does not match. See ${config.snapshotAbsolute}`,
+      config.ignoreSnapshotError
     );
   }
   // Happy-case.
   else {
     return null;
+  }
+}
+
+function throwError(msg: string, ignoreError: boolean): null {
+  if (ignoreError) {
+    console.log(msg);
+    return null;
+  } else {
+    throw new Error(msg);
   }
 }
