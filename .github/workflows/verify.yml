@@ -7,8 +7,11 @@ on:
     branches: [master, dev/*] 
 
 jobs:
-  build_plugin:
+  verify_plugin:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugin
 
     strategy:
       matrix:
@@ -21,7 +24,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}   
       - run: npm i
-      - run: npm run compile
+      - run: npm run build
 
   verify_examples:
     runs-on: windows-latest
@@ -40,4 +43,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }} 
       - run: npm ci
-      - run: npm start
+      - run: npm run start-ci

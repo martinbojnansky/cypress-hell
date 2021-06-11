@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const { addCypressSnapshotsPlugin } = require('../../dist/plugin');
+const { addCypressSnapshotsPlugin } = require('cypress-snapshots');
 /**
  * @type {Cypress.PluginConfig}
  */
