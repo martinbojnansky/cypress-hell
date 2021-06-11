@@ -42,11 +42,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }} 
-      - name: Auto-Commit changed snapshots
-      - uses: stefanzweifel/git-auto-commit-action@v4
-          with:
-            commit_message: Snapshots change
-            commit_options: '--no-verify --signoff'
-            file_pattern: **/cypress/**/actual.png **/cypress/**/diff.png **/cypress/**/expected.png
+      
       - run: npm ci
       - run: npm run update-snapshots
+
+      - name: Auto-Commit changed snapshots
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Snapshots change
+          commit_options: '--no-verify --signoff'
+          file_pattern: cypress/**/actual.png cypress/**/diff.png cypress/**/expected.png
