@@ -6,7 +6,10 @@ import { SnapshotComparisonArgs } from './models';
 let currentRun: Cypress.BeforeRunDetails | undefined;
 let currentSpec: Cypress.Spec | undefined;
 
-export function addCypressSnapshotsPlugin(on: Cypress.PluginEvents, conf: Cypress.PluginConfig): void {
+export function addCypressSnapshotsPlugin(
+  on: Cypress.PluginEvents,
+  conf: Cypress.PluginConfig
+): void {
   on('before:run', (data: Cypress.BeforeRunDetails) => {
     currentRun = data;
   });
@@ -42,6 +45,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
       currentSpec?.specType || 'integration',
       (currentRun?.config?.screenshotsFolder || '').split('\\').reverse()[0]
     )}/`,
+    updateSnapshots: process.env['npm_config_updateSnapshots'] || false,
   };
 
   // Make sure all necessary directories are created.
@@ -50,51 +54,68 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   }
 
   // Get currently screenshoted image.
-  const actualImage = PNG.sync.read(fs.readFileSync(`${config.screenshotsAbsolute}${config.snapshotName}.png`));
+  const actualImage = PNG.sync.read(
+    fs.readFileSync(`${config.screenshotsAbsolute}${config.snapshotName}.png`)
+  );
   // Save currently screenshoted image to snapshots folder as actual.
-  fs.writeFileSync(`${config.snapshotAbsolute}actual.png`, PNG.sync.write(actualImage));
+  fs.writeFileSync(
+    `${config.snapshotAbsolute}actual.png`,
+    PNG.sync.write(actualImage)
+  );
+  const { width, height } = actualImage;
 
-  // Get previously saved and expected snapshot image.
+  // Get previously saved and expected image.
   let expectedImage: any | undefined;
-  let width = 0;
-  let height = 0;
   try {
-    expectedImage = PNG.sync.read(fs.readFileSync(`${config.snapshotAbsolute}expected.png`));
-    width = expectedImage.width;
-    height = expectedImage.height;
-  } catch {
-    throw new Error(
-      `An expected snapshot '${config.snapshotName}' does not yet exist.\n\nReview the 'actual.png' in '${config.snapshotAbsolute}' and rename it to 'expected.png' if you approve the changes.`
+    expectedImage = PNG.sync.read(
+      fs.readFileSync(`${config.snapshotAbsolute}expected.png`)
     );
-  }
+  } catch {}
 
   // Create diff image.
   const diff = new PNG({ width, height });
   let pixelDiffCount: number | undefined;
   try {
-    pixelDiffCount = pixelmatch(expectedImage.data, actualImage.data, diff.data, width, height, args.pixelmatch);
-    // Save diff image to snapshots folder as diff.
-    fs.writeFileSync(`${config.snapshotAbsolute}diff.png`, PNG.sync.write(diff));
+    pixelDiffCount = pixelmatch(
+      expectedImage.data,
+      actualImage.data,
+      diff.data,
+      width,
+      height,
+      args.pixelmatch
+    );
   } catch (ex) {
-    // Fail if images are not the same size.
-    pixelDiffCount = 1;
+    // If images are not the same size pixelmatch will throw an error.
+    pixelDiffCount = width * height;
   }
 
-  // If update snapshots is configured, do not fail the test,
-  // but override expected image with actual.
-  if (args?.updateSnapshots) {
-    fs.writeFileSync(`${config.snapshotAbsolute}expected.png`, PNG.sync.write(actualImage));
-    console.log(
-      `The expected '${config.snapshotName}' snapshot has been updated.\n\nReview the 'expected.png' in '${config.snapshotAbsolute}' and revert the update was not intended.`
+  // Save diff image to snapshots folder as diff.
+  fs.writeFileSync(`${config.snapshotAbsolute}diff.png`, PNG.sync.write(diff));
+
+  // If any pixel has changed and update snapshots is configured, override expected image with actual.
+  if (config.updateSnapshots && pixelDiffCount) {
+    fs.writeFileSync(
+      `${config.snapshotAbsolute}expected.png`,
+      PNG.sync.write(actualImage)
     );
-  }
-
-  // Throw error in order to fail test if any pixel differences has been found.
-  if (pixelDiffCount && !args.updateSnapshots) {
     throw new Error(
-      `The '${config.snapshotName}' snapshot has changed.\n\nReview the 'diff.png' in '${config.snapshotAbsolute}' and rename 'actual.png' to 'expected.png' if you approve the changes.`
+      `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotAbsolute}`
     );
   }
-
-  return null;
+  // Fail if no update is configured and expected image is missing.
+  else if (!expectedImage) {
+    throw new Error(
+      `An expected "${config.snapshotName}" snapshot has not been yet defined. See ${config.snapshotAbsolute}`
+    );
+  }
+  // Fail if any pixel has changed and update has not been configured.
+  else if (pixelDiffCount && !config.updateSnapshots) {
+    throw new Error(
+      `The "${config.snapshotName}" snapshot has changed. ${pixelDiffCount} pixels does not match. See ${config.snapshotAbsolute}`
+    );
+  }
+  // Happy-case.
+  else {
+    return null;
+  }
 }

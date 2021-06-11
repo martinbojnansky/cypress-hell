@@ -5,13 +5,27 @@ describe('index.html', () => {
     cy.visit('');
   });
 
-  function basicTests(context) {
+  function basicTests(ctx) {
     it('should render page', () => {
-      cy.expectSnapshot(`index--${context}__page--rendered`);
+      cy.expectSnapshot(`page--${ctx}`);
     });
 
     it('should render title', () => {
-      cy.get('h1').first().expectSnapshot(`index--${context}__title--rendered`);
+      cy.get('[data-tid=title]').first().expectSnapshot(`title--${ctx}`);
+    });
+
+    it('should render paragraph', () => {
+      cy.get('[data-tid=paragraph]').first().expectSnapshot(`paragraph--${ctx}`);
+    });
+
+    it('should render svg', () => {
+      cy.get('[data-tid=svg]').first().expectSnapshot(`svg--${ctx}`);
+    });
+
+    it('should render scrollable', () => {
+      cy.get('[data-tid=scrollable-wrapper]').first().expectSnapshot(`scrollable-wrapper--${ctx}`);
+      // Does not test scrolled content.
+      cy.get('[data-tid=scrollable-content]').first().expectSnapshot(`scrollable-content--${ctx}`);
     });
   }
 
