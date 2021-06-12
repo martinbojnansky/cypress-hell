@@ -47,6 +47,6 @@ jobs:
       - run: npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Snapshots change
+          commit_message: Snapshots change (${{ matrix.os }})
           commit_options: '--no-verify --signoff'
           file_pattern: examples/cypress/*.png

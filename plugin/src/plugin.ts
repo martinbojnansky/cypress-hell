@@ -39,15 +39,12 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   // Define path variables.
   const config = {
     specName: currentSpec?.name,
-    specRelative: currentSpec?.relative,
-    specAbsolute: currentSpec?.absolute,
+    specPath: currentSpec?.relative,
     specType: currentSpec?.specType,
     snapshotName: args.name,
-    snapshotRelative: `${currentSpec?.relative}-snapshots/${args.name}/`,
-    snapshotAbsolute: `${currentSpec?.absolute}-snapshots/${args.name}/`,
-    snapshotsRelative: `${currentSpec?.relative}-snapshots/`,
-    snapshotsAbsolute: `${currentSpec?.absolute}-snapshots/`,
-    screenshotsAbsolute: `${currentSpec?.absolute?.replace(
+    snapshotPath: `${currentSpec?.relative}-snapshots/${args.name}/`,
+    snapshotsPath: `${currentSpec?.relative}-snapshots/`,
+    screenshotsPath: `${currentSpec?.relative?.replace(
       currentSpec?.specType || 'integration',
       (currentRun?.config?.screenshotsFolder || '').split('\\').reverse()[0]
     )}/`,
@@ -55,19 +52,19 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   };
 
   // Make sure all necessary directories are created.
-  if (!fs.existsSync(config.snapshotAbsolute)) {
-    fs.mkdirSync(config.snapshotAbsolute, { recursive: true });
+  if (!fs.existsSync(config.snapshotPath)) {
+    fs.mkdirSync(config.snapshotPath, { recursive: true });
   }
 
   // Get currently screenshoted image.
   const actualImage = PNG.sync.read(
     fs.readFileSync(
-      `${config.screenshotsAbsolute}__snapshot__${config.snapshotName}.png`
+      `${config.screenshotsPath}__snapshot__${config.snapshotName}.png`
     )
   );
   // Save currently screenshoted image to snapshots folder as actual.
   fs.writeFileSync(
-    `${config.snapshotAbsolute}actual.png`,
+    `${config.snapshotPath}actual.png`,
     PNG.sync.write(actualImage)
   );
   const { width, height } = actualImage;
@@ -76,7 +73,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   let expectedImage: any | undefined;
   try {
     expectedImage = PNG.sync.read(
-      fs.readFileSync(`${config.snapshotAbsolute}expected.png`)
+      fs.readFileSync(`${config.snapshotPath}expected.png`)
     );
   } catch {}
 
@@ -98,28 +95,28 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   }
 
   // Save diff image to snapshots folder as diff.
-  fs.writeFileSync(`${config.snapshotAbsolute}diff.png`, PNG.sync.write(diff));
+  fs.writeFileSync(`${config.snapshotPath}diff.png`, PNG.sync.write(diff));
 
   // If any pixel has changed and update snapshots is configured, override expected image with actual.
   if (config.updateSnapshots && pixelDiffCount) {
     fs.writeFileSync(
-      `${config.snapshotAbsolute}expected.png`,
+      `${config.snapshotPath}expected.png`,
       PNG.sync.write(actualImage)
     );
     throw new Error(
-      `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotAbsolute}`
+      `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotPath}`
     );
   }
   // Fail if no update is configured and expected image is missing.
   else if (!expectedImage) {
     throw new Error(
-      `An expected "${config.snapshotName}" snapshot has not been yet defined. See ${config.snapshotAbsolute}`
+      `An expected "${config.snapshotName}" snapshot has not been yet defined. See ${config.snapshotPath}`
     );
   }
   // Fail if any pixel has changed and update has not been configured.
   else if (pixelDiffCount && !config.updateSnapshots) {
     throw new Error(
-      `The "${config.snapshotName}" snapshot has changed. ${pixelDiffCount} pixels does not match. See ${config.snapshotAbsolute}`
+      `The "${config.snapshotName}" snapshot has changed. ${pixelDiffCount} pixels does not match. See ${config.snapshotPath}`
     );
   }
   // Happy-case.

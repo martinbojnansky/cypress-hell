@@ -3,8 +3,5 @@
 	"video": false,
 	"defaultCommandTimeout": 15000,
 	"testFiles": "**/*.spec.*",
-	"experimentalInteractiveRunEvents": true,
-	"env": {
-		"updateSnapshots": false
-	}
+	"experimentalInteractiveRunEvents": true
 }
