@@ -27,13 +27,14 @@ jobs:
       - run: npm run build
 
   verify_examples:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: examples
 
     strategy:
       matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
         node-version: [10.x]
 
     steps:
