@@ -2,3 +2,4 @@ screenshots
 videos
 **/*-snapshots/**/actual.png
 **/*-snapshots/**/diff.png
+**/*-snapshots/**/*--unknown.png

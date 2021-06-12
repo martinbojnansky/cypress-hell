@@ -51,9 +51,10 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
     updateSnapshots: process.env['npm_config_updatesnapshots'] || false,
     ignoreSnapshotError:
       process.env['npm_config_ignoresnapshoterror'] === 'true' ? true : false,
+    snapshotsOs: process.env['snapshotsos']
+      ? `--${process.env['snapshotsos']}`
+      : '--unknown',
   };
-  console.log(config);
-  console.log('env', process.env);
 
   // Make sure all necessary directories are created.
   if (!fs.existsSync(config.snapshotPath)) {
@@ -68,7 +69,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   );
   // Save currently screenshoted image to snapshots folder as actual.
   fs.writeFileSync(
-    `${config.snapshotPath}actual.png`,
+    `${config.snapshotPath}actual${config.snapshotsOs}.png`,
     PNG.sync.write(actualImage)
   );
   const { width, height } = actualImage;
@@ -77,7 +78,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   let expectedImage: any | undefined;
   try {
     expectedImage = PNG.sync.read(
-      fs.readFileSync(`${config.snapshotPath}expected.png`)
+      fs.readFileSync(`${config.snapshotPath}expected${config.snapshotsOs}.png`)
     );
   } catch {}
 
@@ -99,12 +100,15 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   }
 
   // Save diff image to snapshots folder as diff.
-  fs.writeFileSync(`${config.snapshotPath}diff.png`, PNG.sync.write(diff));
+  fs.writeFileSync(
+    `${config.snapshotPath}diff${config.snapshotsOs}.png`,
+    PNG.sync.write(diff)
+  );
 
   // If any pixel has changed and update snapshots is configured, override expected image with actual.
   if (config.updateSnapshots && pixelDiffCount) {
     fs.writeFileSync(
-      `${config.snapshotPath}expected.png`,
+      `${config.snapshotPath}expected${config.snapshotsOs}.png`,
       PNG.sync.write(actualImage)
     );
     return throwError(

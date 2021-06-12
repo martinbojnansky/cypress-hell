@@ -5,7 +5,6 @@
   "scripts": {
     "start": "npm-run-all -p -r serve test",
     "start-ci": "npm-run-all -p -r serve test-ci",
-    "start-ci:ubuntu-latest": "npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true",
     "serve": "node index.js",
     "test": "cypress open",
     "test-ci": "cypress run",
