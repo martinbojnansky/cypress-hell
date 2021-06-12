@@ -23,17 +23,20 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}   
-      - run: npm i
-      - run: npm run build
+      - name: Build plugin
+        run: | 
+          npm i
+          npm run build
 
   verify_examples:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: examples
 
     strategy:
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: [10.x]
 
     steps:
@@ -41,6 +44,20 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }} 
-      - run: npm ci
-      - run: npm run start-ci
+          node-version: ${{ matrix.node-version }}  
+      - name: Build plugin
+        working-directory: plugin
+        run: |
+          npm i
+          npm run build
+      - name: Update snapshots
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
+      - name: Commit snapshots
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Snapshots change (${{ matrix.os }})
+          commit_options: '--no-verify --signoff'
+          push_options: '--force'
+          file_pattern: examples/cypress/*.png
