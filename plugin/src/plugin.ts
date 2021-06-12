@@ -44,22 +44,13 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
     snapshotName: args.name,
     snapshotPath: `${currentSpec?.relative}-snapshots/${args.name}/`,
     snapshotsPath: `${currentSpec?.relative}-snapshots/`,
-<<<<<<< HEAD
-    screenshotsPath: `${currentSpec?.relative?.replace(
-      currentSpec?.specType || 'integration',
-      (currentRun?.config?.screenshotsFolder || '').split('\\').reverse()[0]
-    )}/`,
-    updateSnapshots:
-      process.env['npm_config_updateSnapshots'] === 'true' ? true : false,
-    ignoreSnapshotError:
-      process.env['npm_config_ignoreSnapshotError'] === 'true' ? true : false,
-=======
     screenshotsPath: `${currentSpec?.relative.replace(
       '/integration/',
       '/screenshots/'
     )}/`, // TODO: Tests folder or screenshots folder can be configured
     updateSnapshots: process.env['npm_config_updateSnapshots'] || false,
->>>>>>> 95909f2... Temp fix for screenshots unix path
+    ignoreSnapshotError:
+      process.env['npm_config_ignoreSnapshotError'] === 'true' ? true : false,
   };
 
   // Make sure all necessary directories are created.
