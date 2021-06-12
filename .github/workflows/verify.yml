@@ -23,8 +23,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}   
-      - run: npm i
-      - run: npm run build
+      - name: Build plugin
+        run: npm i
+        run: npm run build
 
   verify_examples:
     runs-on: ${{ matrix.os }}
@@ -43,6 +44,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}  
+      - name: Build plugin
+        working-directory: ../plugin
+        run: npm i
+        run: npm run build
       - run: npm ci
       - run: npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true
       - uses: stefanzweifel/git-auto-commit-action@v4

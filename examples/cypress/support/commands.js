@@ -1,3 +1,3 @@
-import { addCypressSnapshotsCommands } from 'cypress-snapshots';
+import { addCypressSnapshotsCommands } from '../../../plugin/dist';
 
 addCypressSnapshotsCommands();
