@@ -46,10 +46,13 @@ jobs:
           node-version: ${{ matrix.node-version }}  
       - name: Build plugin
         working-directory: ../plugin
-        run: npm i
-        run: npm run build
-      - run: npm ci
-      - run: npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true
+        run: |
+          npm i
+          npm run build
+      - name: Update snapshots
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
