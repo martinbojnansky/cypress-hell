@@ -51,8 +51,8 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
     updateSnapshots: process.env['npm_config_updatesnapshots'] || false,
     ignoreSnapshotError:
       process.env['npm_config_ignoresnapshoterror'] === 'true' ? true : false,
-    snapshotsOs: process.env['snapshotsos']
-      ? `--${process.env['snapshotsos']}`
+    snapshotsOs: process.env['npm_config_snapshotsos']
+      ? `--${process.env['npm_config_snapshotsos']}`
       : '--unknown',
   };
 

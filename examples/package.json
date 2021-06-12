@@ -7,8 +7,7 @@
     "start-ci": "npm-run-all -p -r serve test-ci",
     "serve": "node index.js",
     "test": "cypress open",
-    "test-ci": "cypress run",
-    "update-snapshots": "npm run test-ci --updateSnapshots=true --ignoreSnapshotError=true"
+    "test-ci": "cypress run"
   },
   "repository": {
     "type": "git",
