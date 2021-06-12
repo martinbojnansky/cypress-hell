@@ -24,8 +24,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}   
       - name: Build plugin
-        run: npm i
-        run: npm run build
+        run: | 
+          npm i
+          npm run build
 
   verify_examples:
     runs-on: ${{ matrix.os }}
@@ -53,7 +54,8 @@ jobs:
         run: |
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Commit snapshots
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
           commit_options: '--no-verify --signoff'
