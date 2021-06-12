@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}  
       - name: Build plugin
-        working-directory: ../plugin
+        working-directory: plugin
         run: |
           npm i
           npm run build
