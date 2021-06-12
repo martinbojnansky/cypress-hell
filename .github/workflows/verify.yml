@@ -53,7 +53,7 @@ jobs:
       - name: Update snapshots
         run: |
           npm ci
-          npm run start-ci-${{ matrix.os }}
+          npm run start-ci:${{ matrix.os }}
       - name: Commit snapshots
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
