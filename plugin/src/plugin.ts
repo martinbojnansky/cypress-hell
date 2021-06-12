@@ -114,6 +114,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
       PNG.sync.write(actualImage)
     );
     return throwError(
+
       `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotPath}`,
       config.ignoreSnapshotError
     );
