@@ -48,10 +48,11 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
       '/integration/',
       '/screenshots/'
     )}/`, // TODO: Tests folder or screenshots folder can be configured
-    updateSnapshots: process.env['npm_config_updateSnapshots'] || false,
+    updateSnapshots: process.env['npm_config_updatesnapshotss'] || false,
     ignoreSnapshotError:
-      process.env['npm_config_ignoreSnapshotError'] === 'true' ? true : false,
+      process.env['npm_config_ignoresnapshoterror'] === 'true' ? true : false,
   };
+  console.log(config);
   console.log('env', process.env);
 
   // Make sure all necessary directories are created.
