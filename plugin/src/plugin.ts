@@ -52,6 +52,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
     ignoreSnapshotError:
       process.env['npm_config_ignoreSnapshotError'] === 'true' ? true : false,
   };
+  console.log('env', process.env);
 
   // Make sure all necessary directories are created.
   if (!fs.existsSync(config.snapshotPath)) {
