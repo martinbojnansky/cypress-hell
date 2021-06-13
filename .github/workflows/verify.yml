@@ -54,18 +54,18 @@ jobs:
           npm run build
 
       - name: Verify snapshots
-        if: "!contains('refs/heads/dev/', github.ref)"
+        if: !contains('refs/heads/dev/', github.ref)
         run: |
           npm ci
           npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
 
       - name: Update snapshots
-        if: "contains('refs/heads/dev/', github.ref)"
+        if: contains('refs/heads/dev/', github.ref)
         run: |
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
       - name: Commit snapshots
-        if: "contains('refs/heads/dev/', github.ref)"
+        if: contains('refs/heads/dev/', github.ref)
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
