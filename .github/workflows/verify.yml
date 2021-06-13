@@ -37,7 +37,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
         node-version: [10.x]
 
     steps:
@@ -68,8 +68,9 @@ jobs:
         working-directory: examples
 
     steps: 
+      - name: Commit snapshots
       run: |
-        git add **/*.snap.txt
+        git add **/*.snap.png
         git commit -m "Snapshots updated"
         git push
       
