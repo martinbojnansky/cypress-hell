@@ -52,7 +52,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
     ignoreSnapshotError:
       process.env['npm_config_ignoresnapshoterror'] === 'true' ? true : false,
     snapshotsSuffix: process.env['npm_config_snapshotssuffix']
-      ? `.${process.env['npm_config_snapshotsos']}`
+      ? `.${process.env['npm_config_snapshotssuffix']}`
       : `.unknown`,
     browser: currentRun?.browser?.name,
   };
@@ -141,7 +141,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 
 function throwError(msg: string, ignoreError: boolean): null {
   if (ignoreError) {
-    console.log(msg);
+    console.log(`[SNAP] ${msg}`);
     return null;
   } else {
     throw new Error(msg);
