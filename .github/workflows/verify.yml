@@ -68,7 +68,7 @@ jobs:
         working-directory: examples
 
     steps: 
-      run:
+      run: |
         git add **/*.snap.txt
         git commit -m "Snapshots updated"
         git push
