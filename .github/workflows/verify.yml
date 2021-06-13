@@ -70,10 +70,14 @@ jobs:
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
 
-      - name: Commit snapshots
-        run: |
-          git pull
-          git add examples/cypress/**/*.snap.png
-          git commit -m "Snapshots change (${{ matrix.os }})"
-          git push
+      - name: Pull
+        run: git pull
 
+      - name: Commit snapshots
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Snapshots change (${{ matrix.os }})
+          commit_options: '--no-verify --signoff'
+          push_options: '--force'
+          file_pattern: examples/cypress/*.png
