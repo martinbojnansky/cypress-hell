@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [master, dev/*] 
 
+concurrency: ${{ github.ref }}
+
 jobs:
   verify_plugin:
     runs-on: ubuntu-latest
@@ -47,7 +49,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}  
         
-      - run: git pull
       
       - name: Build plugin
         working-directory: plugin
@@ -61,6 +62,9 @@ jobs:
           npm ci
           npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
 
+      - name: Pull
+        run: git pull
+      
       - name: Update snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         run: |
