@@ -3,8 +3,10 @@ name: Verify
 on:
   push:
     branches: [master, dev/*]
-  pull_request:
-    branches: [master, dev/*] 
+
+concurrency: 
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify_plugin:
@@ -23,6 +25,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}   
+          
       - name: Build plugin
         run: | 
           npm i
@@ -45,19 +48,33 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}  
+        
+      
       - name: Build plugin
         working-directory: plugin
         run: |
           npm i
           npm run build
+
+      - name: Verify snapshots
+        if: ${{ !contains(github.ref, 'refs/heads/dev/') }}
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
+      
       - name: Update snapshots
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         run: |
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
+
+      - name: Pull
+        run: git pull
+
       - name: Commit snapshots
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
           commit_options: '--no-verify --signoff'
-          push_options: '--force'
           file_pattern: examples/cypress/*.png
