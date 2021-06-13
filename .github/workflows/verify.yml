@@ -2,8 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [master, dev/*],
-    pull_requests: [master, dev/*]
+    branches: [master, dev/*]
 
 concurrency: 
   group: ${{ github.ref }}
