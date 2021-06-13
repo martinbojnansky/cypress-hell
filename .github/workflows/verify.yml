@@ -37,7 +37,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: [10.x]
 
     steps:
@@ -46,7 +46,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}  
-          
+        run: git pull
+      
       - name: Build plugin
         working-directory: plugin
         run: |
@@ -59,18 +60,16 @@ jobs:
           npm ci
           npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
 
-  commit_snapshots:
-    runs-on: ubuntu_latest
-    if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-    needs: verify_examples
-    defaults:
-      run:
-        working-directory: examples
-
-    steps: 
+      - name: Update snapshots
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
       - name: Commit snapshots
-      run: |
-        git add **/*.snap.png
-        git commit -m "Snapshots updated"
-        git push
-      
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Snapshots change (${{ matrix.os }})
+          commit_options: '--no-verify --signoff'
+          push_options: '--force'
+          file_pattern: examples/cypress/*.png
