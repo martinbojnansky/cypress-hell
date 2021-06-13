@@ -7,7 +7,9 @@
     "start-ci": "npm-run-all -p -r serve test-ci",
     "serve": "node index.js",
     "test": "cypress open",
-    "test-ci": "cypress run"
+    "test-ci": "npm-run-all -s test-ci:chrome test-ci:firefox",
+    "test-ci:chrome": "cypress run --browser=chrome --headless",
+    "test-ci:firefox": "cypress run --browser=firefox --headless"
   },
   "repository": {
     "type": "git",
