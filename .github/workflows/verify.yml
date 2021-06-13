@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}   
+          
       - name: Build plugin
         run: | 
           npm i
@@ -36,7 +37,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: [10.x]
 
     steps:
@@ -45,16 +46,26 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}  
+          
       - name: Build plugin
         working-directory: plugin
         run: |
           npm i
           npm run build
+
+      - name: Verify snapshots
+        if: "!contains('refs/heads/dev/', github.ref)"
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
+
       - name: Update snapshots
+        if: "contains('refs/heads/dev/', github.ref)"
         run: |
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
       - name: Commit snapshots
+        if: "contains('refs/heads/dev/', github.ref)"
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
