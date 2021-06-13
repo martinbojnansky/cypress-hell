@@ -51,9 +51,10 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
     updateSnapshots: process.env['npm_config_updatesnapshots'] || false,
     ignoreSnapshotError:
       process.env['npm_config_ignoresnapshoterror'] === 'true' ? true : false,
-    snapshotsOs: process.env['npm_config_snapshotsos']
-      ? `--${process.env['npm_config_snapshotsos']}`
-      : '--unknown',
+    snapshotsSuffix: process.env['npm_config_snapshotssuffix']
+      ? `.${process.env['npm_config_snapshotssuffix']}`
+      : `.unknown`,
+    browser: currentRun?.browser?.name,
   };
 
   // Make sure all necessary directories are created.
@@ -69,7 +70,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   );
   // Save currently screenshoted image to snapshots folder as actual.
   fs.writeFileSync(
-    `${config.snapshotPath}actual${config.snapshotsOs}.snap.png`,
+    `${config.snapshotPath}actual${config.snapshotsSuffix}.${config.browser}.snap.png`,
     PNG.sync.write(actualImage)
   );
   const { width, height } = actualImage;
@@ -79,7 +80,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
   try {
     expectedImage = PNG.sync.read(
       fs.readFileSync(
-        `${config.snapshotPath}expected${config.snapshotsOs}.snap.png`
+        `${config.snapshotPath}expected${config.snapshotsSuffix}.${config.browser}.snap.png`
       )
     );
   } catch {}
@@ -103,18 +104,17 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 
   // Save diff image to snapshots folder as diff.
   fs.writeFileSync(
-    `${config.snapshotPath}diff${config.snapshotsOs}.snap.png`,
+    `${config.snapshotPath}diff${config.snapshotsSuffix}.${config.browser}.snap.png`,
     PNG.sync.write(diff)
   );
 
   // If any pixel has changed and update snapshots is configured, override expected image with actual.
   if (config.updateSnapshots && pixelDiffCount) {
     fs.writeFileSync(
-      `${config.snapshotPath}expected${config.snapshotsOs}.snap.png`,
+      `${config.snapshotPath}expected${config.snapshotsSuffix}.${config.browser}.snap.png`,
       PNG.sync.write(actualImage)
     );
     return throwError(
-
       `The "${config.snapshotName}" snapshot has been updated and should be re-tested. See ${config.snapshotPath}`,
       config.ignoreSnapshotError
     );
@@ -141,7 +141,7 @@ function runSnapshotComparison(args: SnapshotComparisonArgs) {
 
 function throwError(msg: string, ignoreError: boolean): null {
   if (ignoreError) {
-    console.log(msg);
+    console.log(`[SNAP] ${msg}`);
     return null;
   } else {
     throw new Error(msg);

@@ -39,7 +39,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
         node-version: [10.x]
 
     steps:
@@ -60,15 +60,16 @@ jobs:
         if: ${{ !contains(github.ref, 'refs/heads/dev/') }}
         run: |
           npm ci
-          npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
+          npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsSuffix=${{matrix.os}}
       
       - name: Update snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         run: |
           npm ci
-          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
+          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
 
       - name: Pull
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         run: git pull
 
       - name: Commit snapshots
