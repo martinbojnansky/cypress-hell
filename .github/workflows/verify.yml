@@ -61,15 +61,16 @@ jobs:
         run: |
           npm ci
           npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsOs=${{matrix.os}}
-
-      - name: Pull
-        run: git pull
       
       - name: Update snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         run: |
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsOs=${{matrix.os}}
+
+      - name: Pull
+        run: git pull
+
       - name: Commit snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         uses: stefanzweifel/git-auto-commit-action@v4
