@@ -78,4 +78,4 @@ jobs:
         with:
           commit_message: Snapshots change (${{ matrix.os }})
           commit_options: '--no-verify --signoff'
-          file_pattern: examples/cypress/*.png
+          file_pattern: examples/cypress/*.snap.png

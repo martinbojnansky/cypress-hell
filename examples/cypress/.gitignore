@@ -1,5 +1,4 @@
 screenshots
 videos
 **/*-snapshots/**/actual.*.snap.png
-**/*-snapshots/**/diff.*.snap.png
 **/*-snapshots/**/*.unknown.snap.png
