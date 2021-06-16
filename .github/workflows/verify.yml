@@ -77,7 +77,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
-          commit_options: '--no-verify --signoff'
+          commit_options: '--force --no-verify --signoff'
           file_pattern: examples/cypress/*.snap.png
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
