@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }} # Required to work with auto-commit.
+          ref: ${{ github.head_ref }} # Required to work with pull-requests.
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -79,7 +79,8 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Snapshots change (${{ matrix.os }})
-          commit_options: '--no-verify --signoff'
+          commit_options: ''
           file_pattern: examples/cypress/*.snap.png
+          skip_dirty_check: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
