@@ -70,14 +70,14 @@ jobs:
       #     npm ci
       #     npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
 
-      - name: Commit snapshots
-        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-        run: git pull
-        run: git add *.snap.png
-        run: git lfs push ${{ github.ref }}
-        run: git lfs status
-        run: git commit -m "Snapshosts change (${{ matrix.os }})"
-        run: git push ${{ github.ref }}
+      # - name: Commit snapshots
+        # if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+      - run: git pull
+        -run: git add *.snap.png
+      - run: git lfs push ${{ github.ref }}
+      - run: git lfs status
+      - run: git commit -m "Snapshosts change (${{ matrix.os }})"
+      - run: git push ${{ github.ref }}
 
       # - name: Commit snapshots
       #   if: ${{ contains(github.ref, 'refs/heads/dev/') }}
