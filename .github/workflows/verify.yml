@@ -71,7 +71,7 @@ jobs:
 
       - name: Commit snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-      - run: |
+        run: |
           git pull
           git config user.name "actions@github.com"
           git config user.email "GitHub Actions"
