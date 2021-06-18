@@ -44,11 +44,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}  
-        
+          node-version: ${{ matrix.node-version }}    
       
       - name: Build plugin
         working-directory: plugin
@@ -68,14 +68,14 @@ jobs:
           npm ci
           npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
 
-      - name: Pull
-        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-        run: git pull
-
       - name: Commit snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Snapshots change (${{ matrix.os }})
-          commit_options: '--no-verify --signoff'
-          file_pattern: examples/cypress/*.png
+        run: |
+          git pull
+          git config user.name "actions@github.com"
+          git config user.email "GitHub Actions"
+          git add *.snap.png
+          git lfs push origin ${{github.ref}}
+          git lfs status
+          git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No snapshots changed."
+          git push origin ${{github.ref}}
