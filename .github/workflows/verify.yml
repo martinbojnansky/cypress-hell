@@ -75,7 +75,7 @@ jobs:
         run: |
           git pull
           git add *.snap.png
-          git lfs push
+          git lfs push ${{ github.head_ref }}
           git lfs status
           git commit -m "Snapshosts change (${{ matrix.os }})"
           git push ${{ github.head_ref }}
