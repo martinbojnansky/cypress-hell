@@ -64,15 +64,15 @@ jobs:
           npm ci
           npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsSuffix=${{matrix.os}}
       
-      - name: Update snapshots
-        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-        run: |
-          npm ci
-          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
+      # - name: Update snapshots
+      #   if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+      #   run: |
+      #     npm ci
+      #     npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
 
-      - name: Pull
-        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-        run: git pull
+      # - name: Pull
+      #   if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+      #   run: git pull
 
       - name: Commit snapshots
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
