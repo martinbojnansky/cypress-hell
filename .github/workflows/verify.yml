@@ -73,7 +73,7 @@ jobs:
       # - name: Commit snapshots
         # if: ${{ contains(github.ref, 'refs/heads/dev/') }}
       - run: git pull
-        -run: git add *.snap.png
+      - run: git add *.snap.png
       - run: git lfs push ${{ github.ref }}
       - run: git lfs status
       - run: git commit -m "Snapshosts change (${{ matrix.os }})"
