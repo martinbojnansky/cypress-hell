@@ -79,7 +79,7 @@ jobs:
       - run: git add *.snap.png
       - run: git lfs push origin dev/repo-size
       - run: git lfs status
-      - run: git commit -m "Snapshosts change (${{ matrix.os }})"
+      - run: git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No changed snapshots."
       - run: git push origin dev/repo-size
 
       # - name: Commit snapshots
