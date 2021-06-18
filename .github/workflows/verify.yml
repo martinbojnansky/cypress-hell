@@ -44,8 +44,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }} # Required to work with pull-requests.
+      
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -76,7 +75,7 @@ jobs:
           git config user.name "actions@github.com"
           git config user.email "GitHub Actions"
           git add *.snap.png
-          git lfs push origin dev/repo-size
+          git lfs push origin ${{github.ref##*/}}
           git lfs status
           git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No changed snapshots."
-          git push origin dev/repo-size
+          git push origin ${{github.ref##*/}}
