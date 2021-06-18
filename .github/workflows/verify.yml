@@ -77,5 +77,5 @@ jobs:
           git add *.snap.png
           git lfs push origin ${{github.ref}}
           git lfs status
-          git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No changed snapshots."
+          git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No snapshots changed."
           git push origin ${{github.ref}}
