@@ -74,6 +74,10 @@ jobs:
         if: ${{ contains(github.ref, 'refs/heads/dev/') }}
         run: |
           git pull
+          
+      - name: LFS add
+        run: |
+          git lfs add *
           git lfs status
 
       - name: Commit snapshots
