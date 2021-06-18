@@ -49,46 +49,34 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}  
-        
+          node-version: ${{ matrix.node-version }}    
       
-      # - name: Build plugin
-      #   working-directory: plugin
-      #   run: |
-      #     npm i
-      #     npm run build
+      - name: Build plugin
+        working-directory: plugin
+        run: |
+          npm i
+          npm run build
 
-      # - name: Verify snapshots
-      #   if: ${{ !contains(github.ref, 'refs/heads/dev/') }}
-      #   run: |
-      #     npm ci
-      #     npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsSuffix=${{matrix.os}}
+      - name: Verify snapshots
+        if: ${{ !contains(github.ref, 'refs/heads/dev/') }}
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=false --ignoreSnapshotError=false --snapshotsSuffix=${{matrix.os}}
       
-      # - name: Update snapshots
-      #   if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-      #   run: |
-      #     npm ci
-      #     npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
+      - name: Update snapshots
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+        run: |
+          npm ci
+          npm run start-ci --updateSnapshots=true --ignoreSnapshotError=true --snapshotsSuffix=${{matrix.os}}
 
-      # - name: Commit snapshots
-        # if: ${{ contains(github.ref, 'refs/heads/dev/') }}
+      - name: Commit snapshots
+        if: ${{ contains(github.ref, 'refs/heads/dev/') }}
       - run: |
           git pull
           git config user.name "actions@github.com"
           git config user.email "GitHub Actions"
-      - run: git add *.snap.png
-      - run: git lfs push origin dev/repo-size
-      - run: git lfs status
-      - run: git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No changed snapshots."
-      - run: git push origin dev/repo-size
-
-      # - name: Commit snapshots
-      #   if: ${{ contains(github.ref, 'refs/heads/dev/') }}
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: Snapshots change (${{ matrix.os }})
-      #     commit_options: ''
-      #     file_pattern: examples/cypress/*.snap.png
-      #     skip_dirty_check: false
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git add *.snap.png
+          git lfs push origin dev/repo-size
+          git lfs status
+          git commit -m "Snapshosts change (${{ matrix.os }})" || echo "No changed snapshots."
+          git push origin dev/repo-size
