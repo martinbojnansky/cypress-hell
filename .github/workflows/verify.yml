@@ -44,6 +44,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }} # Required to work with auto-commit.
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
